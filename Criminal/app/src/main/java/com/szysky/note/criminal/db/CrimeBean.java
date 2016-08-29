@@ -1,5 +1,6 @@
 package com.szysky.note.criminal.db;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.UUID;
 
@@ -33,11 +34,13 @@ public class CrimeBean {
      *  代表此陋习是否已经被处理
      */
     private boolean mSolved;
+    private final SimpleDateFormat mSimpleDateFormat;
 
     public CrimeBean(){
         // 给每个实例生成一个为一个ID
         mId = UUID.randomUUID();
         mDate = new Date();
+        mSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     }
 
     public UUID getId() {
@@ -60,8 +63,8 @@ public class CrimeBean {
         this.mSolved = mSolved;
     }
 
-    public Date getDate() {
-        return mDate;
+    public String getDate() {
+        return mSimpleDateFormat.format(mDate);
     }
 
     public void setDate(Date mDate) {

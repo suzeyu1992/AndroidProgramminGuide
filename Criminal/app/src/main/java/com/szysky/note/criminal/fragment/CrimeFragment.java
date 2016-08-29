@@ -8,6 +8,9 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 
 import com.szysky.note.criminal.R;
@@ -25,6 +28,8 @@ import com.szysky.note.criminal.db.CrimeBean;
 public class CrimeFragment extends Fragment {
 
     private CrimeBean mCrimeBean;
+    private Button btn_crime_date;
+    private CheckBox cb_crime_solved;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,8 +44,16 @@ public class CrimeFragment extends Fragment {
         //  转换一个xml作为视图, 并返回给activity
         View rootView = inflater.inflate(R.layout.fragment_crime, container, false);
 
-        // 查找控件并设置监听
+        // 查找控件
         EditText et_crime_title = (EditText) rootView.findViewById(R.id.et_crime_title);
+        btn_crime_date = (Button) rootView.findViewById(R.id.btn_crime_date);
+        cb_crime_solved = (CheckBox) rootView.findViewById(R.id.cb_crime_solved);
+
+        // 为按钮设置创建陋习bean的时间
+        btn_crime_date.setText(mCrimeBean.getDate());
+        btn_crime_date.setEnabled(false);   // 禁用Button 会发现其样式也会发生改变
+
+        //  EditText添加监听 用来改变陋习的内容
         et_crime_title.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -58,6 +71,17 @@ public class CrimeFragment extends Fragment {
 
             }
         });
+
+
+        //  checkBox进行初始化设置
+        cb_crime_solved.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //  设置陋习的是否已经解决
+                mCrimeBean.setSolved(isChecked);
+            }
+        });
+
 
         return rootView;
     }
