@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Criminal</string>
+    <string name="crime_hint">输入一个陋习的标题</string>
+</resources>
