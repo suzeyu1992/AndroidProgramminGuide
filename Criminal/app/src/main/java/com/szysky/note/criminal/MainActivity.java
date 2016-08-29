@@ -31,10 +31,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (fragment == null) {
             fragment = new CrimeFragment();
+            fm.beginTransaction()
+                    .add(R.id.activity_main, fragment)
+                    .commit();
         }
 
-        fm.beginTransaction()
-                .add(R.id.activity_main, fragment)
-                .commit();
+
     }
 }
