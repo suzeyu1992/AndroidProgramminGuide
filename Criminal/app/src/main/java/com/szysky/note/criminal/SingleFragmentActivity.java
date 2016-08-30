@@ -1,9 +1,9 @@
 package com.szysky.note.criminal;
 
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 import com.szysky.note.criminal.fragment.CrimeFragment;
 
@@ -13,11 +13,13 @@ import com.szysky.note.criminal.fragment.CrimeFragment;
  * Blog   : http://szysky.com
  * GitHub : https://github.com/suzeyu1992
  *
- * ClassDescription : Launcher页面, 具体处理逻辑交给其Fragment
+ * ClassDescription : 通用的Activity创建抽象类
  */
 
 
-public class MainActivity extends AppCompatActivity {
+public abstract class SingleFragmentActivity extends AppCompatActivity {
+
+    protected abstract Fragment createFragment();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         Fragment fragment = fm.findFragmentById(R.id.activity_main);
 
         if (fragment == null) {
-            fragment = new CrimeFragment();
+            fragment = createFragment();
             fm.beginTransaction()
                     .add(R.id.activity_main, fragment)
                     .commit();
