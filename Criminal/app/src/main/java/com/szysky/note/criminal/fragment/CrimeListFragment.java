@@ -1,6 +1,5 @@
 package com.szysky.note.criminal.fragment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -9,14 +8,13 @@ import android.support.v4.app.ListFragment;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.szysky.note.criminal.R;
-import com.szysky.note.criminal.activity.CrimeActivity;
+import com.szysky.note.criminal.activity.CrimePagerActivity;
 import com.szysky.note.criminal.db.CrimeBean;
 import com.szysky.note.criminal.db.CrimeLab;
 
@@ -72,7 +70,7 @@ public class CrimeListFragment extends ListFragment {
         CrimeBean item = (CrimeBean) getListAdapter().getItem(position);
         Log.d(TAG, "onListItemClick: 点击的内容"+item.getTitle());
 
-        Intent intent = new Intent(getActivity().getApplicationContext(), CrimeActivity.class);
+        Intent intent = new Intent(getActivity().getApplicationContext(), CrimePagerActivity.class);
         // 传入陋习的id
         intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, item.getId());
         startActivity(intent);
