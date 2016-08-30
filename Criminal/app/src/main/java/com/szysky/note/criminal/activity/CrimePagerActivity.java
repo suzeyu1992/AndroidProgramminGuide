@@ -41,7 +41,6 @@ public class CrimePagerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //  动态创建ViewPager并设置到setContent
         mViewPager = new ViewPager(getApplicationContext());
         // 如果需要对Fragment进行托管, 那么要求其容器视图必须具备资源ID

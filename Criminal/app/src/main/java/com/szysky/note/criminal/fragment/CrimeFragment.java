@@ -6,10 +6,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -61,6 +63,9 @@ public class CrimeFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate: ");
 
+        //  开启选项菜单处理
+        setHasOptionsMenu(true);
+
         //  通过 argument 来获得uuid
         UUID crimeID = (UUID) getArguments().getSerializable(EXTRA_CRIME_ID);
 
@@ -71,6 +76,10 @@ public class CrimeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreateView: ");
+        //  修改操作栏的返回键显示
+        ((AppCompatActivity)getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
         //  转换一个xml作为视图, 并返回给activity
         View rootView = inflater.inflate(R.layout.fragment_crime, container, false);
 
@@ -145,6 +154,23 @@ public class CrimeFragment extends Fragment {
             mCrimeBean.setDate(date);
             updateDate();
         }
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                getActivity().finish();
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+
+        }
+
+
     }
 
     /**

@@ -31,13 +31,7 @@ public class CrimeLab {
         mContext = context.getApplicationContext();
         mCrimes = new ArrayList<>();
 
-        //  创建模拟数据
-        for (int i = 0; i < 100; i++) {
-            CrimeBean crimeBean = new CrimeBean();
-            crimeBean.setTitle("Crime @"+i);
-            crimeBean.setSolved(i%2==0);
-            mCrimes.add(crimeBean);
-        }
+
     };
 
     /**
@@ -66,5 +60,9 @@ public class CrimeLab {
             }
         }
         return null;
+    }
+
+    public void addCrime(CrimeBean cri){
+        mCrimes.add(cri);
     }
 }
