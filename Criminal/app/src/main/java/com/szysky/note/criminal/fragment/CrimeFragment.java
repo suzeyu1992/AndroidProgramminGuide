@@ -1,8 +1,11 @@
 package com.szysky.note.criminal.fragment;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -19,6 +22,7 @@ import com.szysky.note.criminal.db.CrimeBean;
 import com.szysky.note.criminal.db.CrimeLab;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -37,9 +41,20 @@ public class CrimeFragment extends Fragment {
      *  Intent接收具体实例的id键值
      */
     public static final String EXTRA_CRIME_ID = "crime_id";
+
+    /**
+     *  请求代码常量 用于DialogFragment 设定请求目标的fragment
+     */
+    public static final int REQUEST_DATE = 0;
+
     private CrimeBean mCrimeBean;
     private Button btn_crime_date;
     private CheckBox cb_crime_solved;
+
+    /**
+     *  给DialogPickerFragment声明一个字符串标识
+     */
+    private static final String DIALOG_DATE = "date";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -65,8 +80,8 @@ public class CrimeFragment extends Fragment {
         cb_crime_solved = (CheckBox) rootView.findViewById(R.id.cb_crime_solved);
 
         // 为按钮设置创建陋习bean的时间
-        btn_crime_date.setText(mCrimeBean.getDate());
-        btn_crime_date.setEnabled(false);   // 禁用Button 会发现其样式也会发生改变
+        updateDate();
+        //btn_crime_date.setEnabled(false);   // 禁用Button 会发现其样式也会发生改变
 
         //  设置获取Intent中关联的陋习数据
         et_crime_title.setText(mCrimeBean.getTitle());
@@ -101,10 +116,43 @@ public class CrimeFragment extends Fragment {
             }
         });
 
+        //  为按钮设置点击事件
+        btn_crime_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                DatePickerFragment dialog = DatePickerFragment.newInstance(mCrimeBean.getRawDate());
+
+                // 给DialogFragment 设定一个目标Fragment的用于数据的返回
+                dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
+
+                // 让DialogFragment显示有show()的重载两个方式, 一个是传入FragmentManager 和 FragmentTransaction
+                // 如果传入FragmentManager那么事务可以自动创建并提交
+                dialog.show(fm, DIALOG_DATE);
+            }
+        });
 
         return rootView;
     }
 
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode != Activity.RESULT_OK) return;
+
+        if (requestCode == REQUEST_DATE){
+            Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+            mCrimeBean.setDate(date);
+            updateDate();
+        }
+    }
+
+    /**
+     *  抽取常用方法, 更新按钮的显示时间
+     */
+    private void updateDate() {
+        btn_crime_date.setText(mCrimeBean.getDate());
+    }
 
     /**
      *  为了满足给 Fragment 添加 argument的两个条件
@@ -125,43 +173,4 @@ public class CrimeFragment extends Fragment {
 
 
 
-
-
-
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        Log.d(TAG, "onDestroyView: ");
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        Log.d(TAG, "onPause: ");
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        Log.d(TAG, "onResume: ");
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        Log.d(TAG, "onDestroy: ");
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        Log.d(TAG, "onStart: ");
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        Log.d(TAG, "onStop: ");
-    }
 }

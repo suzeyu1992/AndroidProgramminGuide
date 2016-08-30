@@ -67,6 +67,11 @@ public class CrimeBean {
         return mSimpleDateFormat.format(mDate);
     }
 
+    public Date getRawDate(){
+        return mDate;
+    }
+
+
     public void setDate(Date mDate) {
         this.mDate = mDate;
     }
