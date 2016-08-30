@@ -8,6 +8,8 @@ import android.os.Bundle;
 import com.szysky.note.criminal.SingleFragmentActivity;
 import com.szysky.note.criminal.fragment.CrimeFragment;
 
+import java.util.UUID;
+
 /**
  * Author : suzeyu
  * Time   : 16/8/29  下午5:29
@@ -21,6 +23,8 @@ import com.szysky.note.criminal.fragment.CrimeFragment;
 public class CrimeActivity extends SingleFragmentActivity {
     @Override
     protected Fragment createFragment() {
-        return new CrimeFragment();
+        //  获得上一级页面打开时, 传入的陋习实例ID
+        UUID crimeID = (UUID) getIntent().getSerializableExtra(CrimeFragment.EXTRA_CRIME_ID);
+        return CrimeFragment.newInstance(crimeID);
     }
 }

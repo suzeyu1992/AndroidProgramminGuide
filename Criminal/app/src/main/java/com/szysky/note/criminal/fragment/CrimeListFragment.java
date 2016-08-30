@@ -1,6 +1,7 @@
 package com.szysky.note.criminal.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.szysky.note.criminal.R;
+import com.szysky.note.criminal.activity.CrimeActivity;
 import com.szysky.note.criminal.db.CrimeBean;
 import com.szysky.note.criminal.db.CrimeLab;
 
@@ -54,6 +56,12 @@ public class CrimeListFragment extends ListFragment {
         setListAdapter(myCrimeAdapter);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 当界面发送切换的时候进行 adapter的刷新
+        ((MyCrimeAdapter)getListAdapter()).notifyDataSetChanged();
+    }
 
     /**
      *  覆盖ListFragment类的此方法, 可以方便的响应用户对列表的点击事件
@@ -63,6 +71,11 @@ public class CrimeListFragment extends ListFragment {
         //  通过adapter 获得对应角标的陋习对对象
         CrimeBean item = (CrimeBean) getListAdapter().getItem(position);
         Log.d(TAG, "onListItemClick: 点击的内容"+item.getTitle());
+
+        Intent intent = new Intent(getActivity().getApplicationContext(), CrimeActivity.class);
+        // 传入陋习的id
+        intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, item.getId());
+        startActivity(intent);
     }
 
 
