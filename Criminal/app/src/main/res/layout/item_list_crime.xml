@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content" android:layout_height="wrap_content">
+
+    <CheckBox
+        android:id="@+id/cb_solved"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:focusable="false"
+         />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="normal|bold"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/margin_text_top_normal"
+        android:layout_marginBottom="@dimen/margin_text_top_normal"
+
+        />
+
+    <TextView
+        android:text="CrimeTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_time"
+        android:layout_below="@+id/tv_title"
+        android:layout_alignLeft="@id/tv_title"
+        android:layout_marginTop="@dimen/margin_text_top_big"
+
+      />
+</RelativeLayout>
