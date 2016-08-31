@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!--当引用控件处于激活状态时, 则使用指定的资源文件, 反之不采取任何操作-->
+    <item android:state_activated="true"
+        android:drawable="@android:color/darker_gray"/>
+</selector>

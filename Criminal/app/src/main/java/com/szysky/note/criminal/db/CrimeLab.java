@@ -92,6 +92,11 @@ public class CrimeLab {
         mCrimes.add(cri);
     }
 
+    public void removeCrime(CrimeBean crimeBean){
+        mCrimes.remove(crimeBean);
+    }
+
+
     /**
      * 提供一个本地化的方法, 对已经存在的实例数据集合进行本地化
      *
