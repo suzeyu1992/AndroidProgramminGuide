@@ -144,6 +144,12 @@ public class CrimeFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onPause() {
+        super.onPause();
+        // 在失去焦点的时候进行数据的存储
+        CrimeLab.getInstance(getActivity().getApplicationContext()).saveCrimes();
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
