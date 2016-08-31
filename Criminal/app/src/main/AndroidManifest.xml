@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.szysky.note.criminal">
 
+    <!--增加相机使用权限-->
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <!--指定应用使用的某项特色功能, 这个属性可以保证那些配备相机功能的设备才能看到发布在GooglePlay上的此应用-->
+    <uses-feature android:name="android.hardware.camera2"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -15,6 +20,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.CrimePagerActivity"/>
+        <activity android:name=".activity.CrimeCameraActivity"
+            android:screenOrientation="landscape"/>
 
     </application>
 

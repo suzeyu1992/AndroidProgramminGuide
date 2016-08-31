@@ -10,5 +10,6 @@
     <string name="hide_subtitle">隐藏子标题</string>
     <string name="sub_description">二级标题描述</string>
     <string name="delete_crime">删除陋习</string>
+    <string name="take">拍!</string>
 
 </resources>
