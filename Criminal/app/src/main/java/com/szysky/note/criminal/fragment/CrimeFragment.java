@@ -48,7 +48,12 @@ import java.util.UUID;
 
 public class CrimeFragment extends Fragment {
 
+    private CrimeBean mCrimeBean;
+    private Button btn_crime_date;
+    private CheckBox cb_crime_solved;
+    private ImageView mPhotoView;
     private static final String TAG = CrimeFragment.class.getSimpleName();
+
     /**
      *  Intent接收具体实例的id键值
      */
@@ -58,12 +63,6 @@ public class CrimeFragment extends Fragment {
      *  请求代码常量 用于DialogFragment 设定请求目标的fragment
      */
     public static final int REQUEST_DATE = 0, REQUEST_PHOTO = 1;
-
-
-    private CrimeBean mCrimeBean;
-    private Button btn_crime_date;
-    private CheckBox cb_crime_solved;
-    private ImageView mPhotoView;
 
     /**
      *  给DialogPickerFragment声明一个字符串标识
@@ -174,6 +173,25 @@ public class CrimeFragment extends Fragment {
                     // 相机无法使用, Toast提示
                     Toast.makeText(getActivity(), "相机无法使用", Toast.LENGTH_SHORT).show();
                 }
+
+
+            }
+        });
+
+        //  对图片进行单独放大显示
+        mPhotoView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PhotoBean photoBean = mCrimeBean.getmPhoto();
+                if (photoBean == null){
+                    return ;
+                }
+                
+                // 获得Activity的 Fragment的管理者
+                FragmentManager fm = getActivity().getSupportFragmentManager();
+                String path = getActivity().getFileStreamPath(photoBean.getmFilename()).getAbsolutePath();
+                // 进行大图的Fragment的显示
+                ImageFragment.newInstance(path).show(fm, "image");
 
 
             }
