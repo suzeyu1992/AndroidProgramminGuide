@@ -3,10 +3,14 @@ package com.szysky.note.criminal.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
+import android.database.Cursor;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Camera;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -35,6 +39,7 @@ import com.szysky.note.criminal.utils.MyPictureUtils;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -62,12 +67,13 @@ public class CrimeFragment extends Fragment {
     /**
      *  请求代码常量 用于DialogFragment 设定请求目标的fragment
      */
-    public static final int REQUEST_DATE = 0, REQUEST_PHOTO = 1;
+    public static final int REQUEST_DATE = 0, REQUEST_PHOTO = 1, REQUEST_CONTACT = 2;
 
     /**
      *  给DialogPickerFragment声明一个字符串标识
      */
     private static final String DIALOG_DATE = "date";
+    private Button btn_sendSms;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -100,6 +106,9 @@ public class CrimeFragment extends Fragment {
         cb_crime_solved = (CheckBox) rootView.findViewById(R.id.cb_crime_solved);
         ImageButton mVIBtnCamera =  (ImageButton) rootView.findViewById(R.id.ibtn_camera);
         mPhotoView = (ImageView) rootView.findViewById(R.id.iv_camera_result);
+        View btn_report = rootView.findViewById(R.id.btn_send_report);
+        btn_sendSms = (Button) rootView.findViewById(R.id.btn_send_sms);
+
 
         // 为按钮设置创建陋习bean的时间
         updateDate();
@@ -154,6 +163,7 @@ public class CrimeFragment extends Fragment {
             }
         });
 
+        // 进行拍照按钮
         mVIBtnCamera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -186,13 +196,49 @@ public class CrimeFragment extends Fragment {
                 if (photoBean == null){
                     return ;
                 }
-                
+
                 // 获得Activity的 Fragment的管理者
                 FragmentManager fm = getActivity().getSupportFragmentManager();
                 String path = getActivity().getFileStreamPath(photoBean.getmFilename()).getAbsolutePath();
                 // 进行大图的Fragment的显示
                 ImageFragment.newInstance(path).show(fm, "image");
+            }
+        });
 
+        // 给发送报告的按钮设置点击事件
+        btn_report.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent();
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT, getCrimeReport());
+                intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.crime_report_subject));
+
+                // 设置一个选择每一次都显示activity的选择器.
+                intent= intent.createChooser(intent, getString(R.string.send_report));
+
+                startActivity(intent);
+            }
+        });
+
+        //  给发送短信的按钮设置监听
+        btn_sendSms.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 打开联系人Contract列表
+                // 这是通讯录应用将其权限临时给了本应用, 首先通讯录应用对联系人的数据库具有全部权限. 所以在通讯录应用
+                // 返回包含在Intent中的URI的时候, 他会添加一个Intent.FLAG_GRANT_READ_URI_PERMISSION标识,
+                // 此标志向系统表示, 我们这个应用可以使用联系人数据一次.
+                Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+
+                // 检测是否有接收此Intent的应用
+                List<ResolveInfo> resolveInfos = getActivity().getPackageManager().queryIntentActivities(intent, 0);
+
+                if (resolveInfos.size() > 0){
+                    startActivityForResult(intent, REQUEST_CONTACT);
+                }else{
+                    Toast.makeText(getActivity().getApplicationContext(), "无法打开Intent", Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -245,6 +291,32 @@ public class CrimeFragment extends Fragment {
                 // 照相失败
                 Toast.makeText(getActivity().getApplicationContext(), "照相失败", Toast.LENGTH_SHORT).show();
             }
+
+        }else if (requestCode == REQUEST_CONTACT){
+            //  打开联系人列表关闭后返回的逻辑
+
+            //  从intent取出URI, 该数据URI是一个指向用户所选联系人的定位符.
+            Uri contactUri = data.getData();
+
+            //  specify which fields you want you query to return values for
+            //  指定在返回数据的时候所对应查找的字段
+            String[] queryFileds = {ContactsContract.Contacts.DISPLAY_NAME};
+
+            //  perform query
+            Cursor query = getActivity().getContentResolver().query(contactUri, queryFileds, null, null, null);
+
+            if (query.getCount() == 0){
+                query.close();
+                return;
+            }
+
+            // 获取嫌疑人的姓名 添加到陋习记录中的suspect
+            query.moveToFirst();
+            String suspect = query.getString(0);
+
+            // 添加到Bean对象中 并设置到陋习造成者的按钮上
+            mCrimeBean.setSusepect(suspect);
+            btn_sendSms.setText(suspect);
 
 
         }
@@ -305,6 +377,34 @@ public class CrimeFragment extends Fragment {
 
             mPhotoView.setImageDrawable(scaleDrawable);
         }
+    }
+
+
+    /**
+     *  根据当前的CrimeBean里面的属性, 提供一个方法生成一份报告字符串
+     */
+    private String getCrimeReport(){
+        String solvedString = null;
+        if (mCrimeBean.isSolved()){
+            solvedString = getString(R.string.crime_report_solved);
+        }else{
+            solvedString = getString(R.string.crime_report_unsolved);
+        }
+
+        String date = mCrimeBean.getDate();
+
+        // 获得可疑的人物
+        String suspect = mCrimeBean.getSusepect();
+        if (suspect == null){
+            suspect = getString(R.string.crime_report_no_suspect);
+        }else{
+            suspect = getString(R.string.crime_report_suspect, suspect);
+        }
+
+        //  生成报告
+        String report = getString(R.string.crime_report, mCrimeBean.getTitle(), date, solvedString, suspect);
+
+        return report;
     }
 
 

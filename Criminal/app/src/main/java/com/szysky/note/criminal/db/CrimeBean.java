@@ -43,6 +43,11 @@ public class CrimeBean {
      */
     private PhotoBean mPhoto;
 
+    /**
+     *  陋习所属的嫌疑人
+     */
+    private String mSusepect;
+
     private  SimpleDateFormat mSimpleDateFormat;
 
     /**
@@ -53,6 +58,8 @@ public class CrimeBean {
     private static final String JSON_SOLVED = "solved";
     private static final String JSON_DATE = "date";
     private static final String JSON_PHOTO = "photo";
+    private static final String JSON_SUSPECT = "suspect";
+
 
 
     {
@@ -80,6 +87,11 @@ public class CrimeBean {
             mPhoto = new PhotoBean(jsonObj.getJSONObject(JSON_PHOTO));
         }
 
+        // 判断是否有嫌疑人的信息
+        if (jsonObj.has(JSON_SUSPECT)){
+            mSusepect = jsonObj.getString(JSON_SUSPECT);
+        }
+
     }
 
     /**
@@ -92,6 +104,7 @@ public class CrimeBean {
         jsonObject.put(JSON_SOLVED, mSolved);
         jsonObject.put(JSON_DATE, getRawDate());
         if (mPhoto != null) jsonObject.put(JSON_PHOTO, mPhoto.toJSON());
+        if (mSusepect != null) jsonObject.put(JSON_SUSPECT, mSusepect);
         return jsonObject;
 
     }
@@ -136,6 +149,14 @@ public class CrimeBean {
 
     public void setmPhoto(PhotoBean mPhoto) {
         this.mPhoto = mPhoto;
+    }
+
+    public String getSusepect() {
+        return mSusepect;
+    }
+
+    public void setSusepect(String mSusepect) {
+        this.mSusepect = mSusepect;
     }
 
     @Override
