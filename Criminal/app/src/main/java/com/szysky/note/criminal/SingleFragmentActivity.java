@@ -21,11 +21,16 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
 
     protected abstract Fragment createFragment();
 
+    // 对子类提供一个方法, 抛弃之前的硬编码设置布局
+    protected int getLayoutResId(){
+        return R.layout.activity_main;
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
+        setContentView(getLayoutResId());
         // 获得Fragment 的管理者对象
         FragmentManager fm = getSupportFragmentManager();
         // 先查找管理者中是否已经存在, 如果不存在就new一个

@@ -2,6 +2,7 @@ package com.szysky.note.criminal.activity;
 
 import android.support.v4.app.Fragment;
 
+import com.szysky.note.criminal.R;
 import com.szysky.note.criminal.SingleFragmentActivity;
 import com.szysky.note.criminal.fragment.CrimeListFragment;
 
@@ -17,5 +18,10 @@ public class CrimeListActivity extends SingleFragmentActivity {
     @Override
     protected Fragment createFragment() {
         return new CrimeListFragment();
+    }
+
+    @Override
+    protected int getLayoutResId() {
+        return R.layout.activity_main;
     }
 }
