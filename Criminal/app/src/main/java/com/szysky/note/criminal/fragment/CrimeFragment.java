@@ -3,6 +3,7 @@ package com.szysky.note.criminal.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Camera;
 import android.os.Build;
 import android.os.Bundle;
@@ -22,12 +23,15 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.szysky.note.criminal.R;
 import com.szysky.note.criminal.activity.CrimeCameraActivity;
 import com.szysky.note.criminal.db.CrimeBean;
 import com.szysky.note.criminal.db.CrimeLab;
+import com.szysky.note.criminal.db.PhotoBean;
+import com.szysky.note.criminal.utils.MyPictureUtils;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -53,11 +57,13 @@ public class CrimeFragment extends Fragment {
     /**
      *  请求代码常量 用于DialogFragment 设定请求目标的fragment
      */
-    public static final int REQUEST_DATE = 0;
+    public static final int REQUEST_DATE = 0, REQUEST_PHOTO = 1;
+
 
     private CrimeBean mCrimeBean;
     private Button btn_crime_date;
     private CheckBox cb_crime_solved;
+    private ImageView mPhotoView;
 
     /**
      *  给DialogPickerFragment声明一个字符串标识
@@ -94,6 +100,7 @@ public class CrimeFragment extends Fragment {
         btn_crime_date = (Button) rootView.findViewById(R.id.btn_crime_date);
         cb_crime_solved = (CheckBox) rootView.findViewById(R.id.cb_crime_solved);
         ImageButton mVIBtnCamera =  (ImageButton) rootView.findViewById(R.id.ibtn_camera);
+        mPhotoView = (ImageView) rootView.findViewById(R.id.iv_camera_result);
 
         // 为按钮设置创建陋习bean的时间
         updateDate();
@@ -162,7 +169,7 @@ public class CrimeFragment extends Fragment {
                     //  相机可以使用
                     Intent intent = new Intent();
                     intent.setClass(getActivity().getApplicationContext(), CrimeCameraActivity.class);
-                    startActivity(intent);
+                    startActivityForResult(intent, REQUEST_PHOTO);
                 }else{
                     // 相机无法使用, Toast提示
                     Toast.makeText(getActivity(), "相机无法使用", Toast.LENGTH_SHORT).show();
@@ -176,6 +183,12 @@ public class CrimeFragment extends Fragment {
     }
 
     @Override
+    public void onStart() {
+        super.onStart();
+        showPhoto();
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
         // 在失去焦点的时候进行数据的存储
@@ -183,13 +196,39 @@ public class CrimeFragment extends Fragment {
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+        MyPictureUtils.cleanImageView(mPhotoView);
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) return;
 
         if (requestCode == REQUEST_DATE){
+            //  判断是否是时间控件DatePicker所属的 DialogFragment打开的
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrimeBean.setDate(date);
             updateDate();
+        } else if (requestCode == REQUEST_PHOTO){
+            //  判断是否是打开照相Fragment所返回的
+
+            //  判断是否携带了存储图片的路径信息
+            if (resultCode == Activity.RESULT_OK){
+                // Create n new Photo object and attach into the Crime
+                String stringExtra = data.getStringExtra(CrimeCameraFragment.EXTRA_PHOTO_FILENAME);
+
+                PhotoBean photoBean = new PhotoBean(stringExtra);
+                mCrimeBean.setmPhoto(photoBean);
+                Log.i(TAG, "onActivityResult: @@-> 图片保存的文件名: "+stringExtra +"   Crime: "+mCrimeBean.getTitle()+" 对象已经存在照片属性");
+                showPhoto();
+
+            }else {
+                // 照相失败
+                Toast.makeText(getActivity().getApplicationContext(), "照相失败", Toast.LENGTH_SHORT).show();
+            }
+
+
         }
     }
 
@@ -209,6 +248,8 @@ public class CrimeFragment extends Fragment {
 
 
     }
+
+
 
     /**
      *  抽取常用方法, 更新按钮的显示时间
@@ -231,6 +272,21 @@ public class CrimeFragment extends Fragment {
         CrimeFragment crimeFragment = new CrimeFragment();
         crimeFragment.setArguments(bundle);
         return crimeFragment;
+    }
+
+    /**
+     *  设置一个方法, 直接将缩放后的图片设置给ImageView视图
+     */
+    private void showPhoto(){
+        PhotoBean photoBean = mCrimeBean.getmPhoto();
+        BitmapDrawable bitmapDra = null;
+
+        if (photoBean != null){
+            String path = getActivity().getFileStreamPath(photoBean.getmFilename()).getAbsolutePath();
+            BitmapDrawable scaleDrawable = MyPictureUtils.getScaleDrawable(getActivity(), path);
+
+            mPhotoView.setImageDrawable(scaleDrawable);
+        }
     }
 
 

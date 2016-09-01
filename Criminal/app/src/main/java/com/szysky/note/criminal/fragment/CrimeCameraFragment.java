@@ -1,6 +1,8 @@
 package com.szysky.note.criminal.fragment;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Camera;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -34,6 +36,7 @@ import java.util.UUID;
 public class CrimeCameraFragment extends Fragment implements View.OnClickListener {
 
     private static final String TAG = CrimeCameraFragment.class.getSimpleName();
+    public static final String EXTRA_PHOTO_FILENAME = "file_name";
     private SurfaceView mV_sfv_camera;
     private AppCompatActivity mActivity;
     private Context mContext;
@@ -88,8 +91,14 @@ public class CrimeCameraFragment extends Fragment implements View.OnClickListene
                 }
             }
 
+           // Log.i(TAG, "onPictureTaken(): 照片 JPEG 保存成功, 即将关闭activity, 保存地址:"+filename);
             if(success){
-                Log.i(TAG, "onPictureTaken: 照片 JPEG 保存成功, 即将关闭activity, 保存地址:"+filename);
+                // 设置保存文件的信息返回
+                Intent intent = new Intent();
+                intent.putExtra(EXTRA_PHOTO_FILENAME, filename);
+                mActivity.setResult(Activity.RESULT_OK, intent);
+            }else{
+                mActivity.setResult(Activity.RESULT_CANCELED);
             }
 
             mActivity.finish();

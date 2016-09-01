@@ -37,6 +37,12 @@ public class CrimeBean {
      *  代表此陋习是否已经被处理
      */
     private boolean mSolved;
+
+    /**
+     *  拍照陋习的图片
+     */
+    private PhotoBean mPhoto;
+
     private  SimpleDateFormat mSimpleDateFormat;
 
     /**
@@ -46,6 +52,8 @@ public class CrimeBean {
     private static final String JSON_TITLE = "title";
     private static final String JSON_SOLVED = "solved";
     private static final String JSON_DATE = "date";
+    private static final String JSON_PHOTO = "photo";
+
 
     {
         mSimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -66,6 +74,25 @@ public class CrimeBean {
         }
         mSolved = jsonObj.getBoolean(JSON_SOLVED);
         mDate = new Date(jsonObj.getString(JSON_DATE));
+
+        // 对图片的数据进行判断和反序列化恢复
+        if (jsonObj.has(JSON_PHOTO)){
+            mPhoto = new PhotoBean(jsonObj.getJSONObject(JSON_PHOTO));
+        }
+
+    }
+
+    /**
+     *  将实例对象创建为转成JSONObject对象, 并返回
+     */
+    public JSONObject toJSON() throws JSONException{
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(JSON_ID, mId.toString());
+        jsonObject.put(JSON_TITLE, mTitle);
+        jsonObject.put(JSON_SOLVED, mSolved);
+        jsonObject.put(JSON_DATE, getRawDate());
+        if (mPhoto != null) jsonObject.put(JSON_PHOTO, mPhoto.toJSON());
+        return jsonObject;
 
     }
 
@@ -103,24 +130,19 @@ public class CrimeBean {
         this.mDate = mDate;
     }
 
+    public PhotoBean getmPhoto() {
+        return mPhoto;
+    }
+
+    public void setmPhoto(PhotoBean mPhoto) {
+        this.mPhoto = mPhoto;
+    }
+
     @Override
     public String toString() {
         return mTitle;
     }
 
-    /**
-     *  将实例对象创建为转成JSONObject对象, 并返回
-     *
-     * @return  封装了本实例的属性值成一个 JSONObject
-     */
-    public JSONObject toJSON() throws JSONException{
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put(JSON_ID, mId.toString());
-        jsonObject.put(JSON_TITLE, mTitle);
-        jsonObject.put(JSON_SOLVED, mSolved);
-        jsonObject.put(JSON_DATE, getRawDate());
-        return jsonObject;
 
-    }
 
 }

@@ -8,12 +8,23 @@
         android:layout_width="match_parent"
         android:layout_height="150dp">
 
-        <ImageButton
-            android:id="@+id/ibtn_camera"
+        <ImageView
+            android:id="@+id/iv_camera_result"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginLeft="20dp"
+            android:scaleType="centerCrop"
+            android:background="@android:color/darker_gray"
             android:layout_marginTop="20dp"
+            />
+
+        <ImageButton
+            android:id="@+id/ibtn_camera"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/iv_camera_result"
             android:src="@android:drawable/ic_menu_camera"/>
 
         <TextView
@@ -21,6 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_toRightOf="@+id/ibtn_camera"
             android:layout_marginTop="20dp"
+            android:layout_marginLeft="@dimen/margin_normal"
             android:text="@string/crime_title_label"
             style="?android:listSeparatorTextViewStyle"/>
 
@@ -28,9 +40,9 @@
             android:id="@+id/et_crime_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
+            android:gravity="center_vertical"
             android:layout_toRightOf="@+id/ibtn_camera"
-            android:layout_alignBottom="@+id/ibtn_camera"
+            android:layout_alignBottom="@+id/iv_camera_result"
             android:layout_marginLeft="@dimen/margin_normal"
             android:layout_marginRight="@dimen/margin_normal"
             android:hint="@string/crime_hint"/>
