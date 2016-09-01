@@ -2,6 +2,9 @@ package com.szysky.note.criminal.fragment;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.hardware.Camera;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,8 +21,11 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.szysky.note.criminal.R;
+import com.szysky.note.criminal.activity.CrimeCameraActivity;
 import com.szysky.note.criminal.db.CrimeBean;
 import com.szysky.note.criminal.db.CrimeLab;
 
@@ -87,6 +93,7 @@ public class CrimeFragment extends Fragment {
         EditText et_crime_title = (EditText) rootView.findViewById(R.id.et_crime_title);
         btn_crime_date = (Button) rootView.findViewById(R.id.btn_crime_date);
         cb_crime_solved = (CheckBox) rootView.findViewById(R.id.cb_crime_solved);
+        ImageButton mVIBtnCamera =  (ImageButton) rootView.findViewById(R.id.ibtn_camera);
 
         // 为按钮设置创建陋习bean的时间
         updateDate();
@@ -138,6 +145,30 @@ public class CrimeFragment extends Fragment {
                 // 让DialogFragment显示有show()的重载两个方式, 一个是传入FragmentManager 和 FragmentTransaction
                 // 如果传入FragmentManager那么事务可以自动创建并提交
                 dialog.show(fm, DIALOG_DATE);
+            }
+        });
+
+        mVIBtnCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 对于设备没有相机的应该进行判断
+                PackageManager pm = getActivity().getPackageManager();
+                boolean hasACamera = pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)
+                        || pm.hasSystemFeature(PackageManager.FEATURE_CAMERA_FRONT)
+                        || Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD
+                        || Camera.getNumberOfCameras() > 0;
+
+                if (hasACamera){
+                    //  相机可以使用
+                    Intent intent = new Intent();
+                    intent.setClass(getActivity().getApplicationContext(), CrimeCameraActivity.class);
+                    startActivity(intent);
+                }else{
+                    // 相机无法使用, Toast提示
+                    Toast.makeText(getActivity(), "相机无法使用", Toast.LENGTH_SHORT).show();
+                }
+
+
             }
         });
 
