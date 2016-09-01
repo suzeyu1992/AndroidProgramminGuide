@@ -16,8 +16,11 @@ import android.widget.Button;
 
 import com.szysky.note.criminal.R;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Author :  suzeyu
@@ -34,7 +37,67 @@ public class CrimeCameraFragment extends Fragment implements View.OnClickListene
     private SurfaceView mV_sfv_camera;
     private AppCompatActivity mActivity;
     private Context mContext;
+
+    /**
+     *  相机类, 打开摄像头
+     */
     private Camera mCamera;
+
+    /**
+     *  用户进行拍照的时候进行进度条显示的View
+     */
+    private View mVFlProgress;
+
+    /**
+     *  在进行快门的时候进行进度条View的显示
+     */
+    private Camera.ShutterCallback mShutterCallback = new Camera.ShutterCallback() {
+        @Override
+        public void onShutter() {
+            mVFlProgress.setVisibility(View.VISIBLE);
+        }
+    };
+
+    /**
+     *  Camera如果快门之后有数据处理生成成功,  那么会调此回调, 可以进行把数据写入到本地的动作
+     */
+    private Camera.PictureCallback mJpegCallback = new Camera.PictureCallback() {
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+            // create a filename
+            String filename = UUID.randomUUID().toString()+".jpg";
+            //  save the jpeg date to disk
+            FileOutputStream out = null;
+            boolean success = true;
+
+            try {
+                // 获得输出流进行数据的写入
+                out = mContext.openFileOutput(filename, Context.MODE_PRIVATE);
+                out.write(data);
+            } catch (IOException e) {
+                Log.e(TAG, "onPictureTaken: @@-> 图片写入disk失败, 失败文件地址:"+filename, e );
+            }finally {
+                // 进行清扫动作, 关流
+                if (out != null){
+                    try {
+                        out.close();
+                    } catch (IOException e) {
+                        Log.e(TAG, "onPictureTaken: @@-> 流文件关流失败, 失败文件地址:"+filename, e );
+                        success = false;
+                    }
+                }
+            }
+
+            if(success){
+                Log.i(TAG, "onPictureTaken: 照片 JPEG 保存成功, 即将关闭activity, 保存地址:"+filename);
+            }
+
+            mActivity.finish();
+        }
+    };
+
+
+
 
     @Override
     public void onAttach(Context context) {
@@ -48,10 +111,38 @@ public class CrimeCameraFragment extends Fragment implements View.OnClickListene
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_crime_camera, container, false);
 
+        //  查找控件
         Button mV_btn_take = (Button) rootView.findViewById(R.id.btn_camera_take);
+        mVFlProgress = rootView.findViewById(R.id.fl_camera_progress);
+        mVFlProgress.setVisibility(View.INVISIBLE);
+
         mV_btn_take.setOnClickListener(this);
 
         // 初始化SurfaceView
+        initSurfaceView(rootView);
+
+        return rootView;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // 0为打开后置摄像头, 如果没有后置摄像头那么就打开前置摄像头
+        mCamera = Camera.open(0);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mCamera.release();
+        mCamera = null;
+    }
+
+    /**
+     *  对SurfaceView控件进行一些初始化和绑定客户端Camera
+     */
+    private void initSurfaceView(View rootView) {
         mV_sfv_camera = (SurfaceView) rootView.findViewById(R.id.sfv_camera_display);
         SurfaceHolder holder = mV_sfv_camera.getHolder();
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
@@ -62,13 +153,13 @@ public class CrimeCameraFragment extends Fragment implements View.OnClickListene
             /** SurfaceView的视图层级结构被放在屏幕上时候被调用, 这里也是SurfaceView与客户端(Camera)进行关联的地方*/
             @Override
             public void surfaceCreated(SurfaceHolder holder) {
-                    try {
-                        if (mCamera != null) {
-                            mCamera.setPreviewDisplay(holder);
-                        }
-                    } catch (IOException e) {
-                        Log.e(TAG, "@@-> Camera设置关联SurfaceView预览显示失败!" );
+                try {
+                    if (mCamera != null) {
+                        mCamera.setPreviewDisplay(holder);
                     }
+                } catch (IOException e) {
+                    Log.e(TAG, "@@-> Camera设置关联SurfaceView预览显示失败!" );
+                }
             }
 
             /**  Surface首次显示在屏幕上的时候被动调用的方法, 通过此参数可以知道Surface的像素格式以及他的宽高.
@@ -79,7 +170,9 @@ public class CrimeCameraFragment extends Fragment implements View.OnClickListene
                 // The surface has change size, update the camera preview size
                 Camera.Parameters parameters = mCamera.getParameters();
                 Camera.Size size = getSupportedSize(parameters.getSupportedPreviewSizes(), width, height);
-                parameters.setPreviewSize(size.width, size.height);
+                //  设置图片尺寸大小
+                parameters.setPictureSize(size.width, size.height);
+
                 mCamera.setParameters(parameters);
 
                 try {
@@ -102,24 +195,7 @@ public class CrimeCameraFragment extends Fragment implements View.OnClickListene
                 }
             }
         });
-
-        return rootView;
     }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        // 0为打开后置摄像头, 如果没有后置摄像头那么就打开前置摄像头
-        mCamera = Camera.open(0);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        mCamera.release();
-        mCamera = null;
-    }
-
 
     /**
      *  找出具有最大数目的像素的尺寸
@@ -144,7 +220,12 @@ public class CrimeCameraFragment extends Fragment implements View.OnClickListene
 
         switch (v.getId()){
             case R.id.btn_camera_take:
-                getActivity().finish();
+                //  进行拍照
+                if (mCamera != null){
+                    // 从Camera预览中 捕获一帧的图像数据, 参数如果不需要可以置为null
+                    // 但第三个参数, 最好去实现, 要不此方法不具备什么意义
+                    mCamera.takePicture(mShutterCallback, null, mJpegCallback);
+                }
                 break;
         }
 
