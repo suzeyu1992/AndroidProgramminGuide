@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tabl_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:stretchColumns="*">
+
+    <!--使用了stretchColumns那么会确保表格的列都具有同样的宽度,
+    例如最下方的TableRow里面的元素虽然width设置为为0dp,
+    但是weight却不需要再去设置. 因为他们会平分一个水平线-->
+
+    <TextView
+        android:id="@+id/tv_selected"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2"
+        android:gravity="center"
+        android:text="0"
+        android:textSize="50dp" />
+
+
+    <TextView
+        android:id="@+id/tv_working"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="15dp"
+        android:layout_weight="1"
+        android:background="#555"
+        android:gravity="center"
+        android:text="0"
+        android:textColor="#ccc"
+        android:textSize="20dp" />
+
+    <include
+        android:layout_weight="1"
+        layout="@layout/layout_tablerow_for_three" />
+
+    <include
+        android:layout_weight="1"
+        layout="@layout/layout_tablerow_for_three" />
+
+    <include
+        android:layout_weight="1"
+        layout="@layout/layout_tablerow_for_three" />
+
+    <include
+        android:layout_weight="1"
+        layout="@layout/layout_tablerow_for_three" />
+</TableLayout>
