@@ -3,6 +3,7 @@
     android:id="@+id/tabl_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/shape_remote_bg"
     android:stretchColumns="*">
 
     <!--使用了stretchColumns那么会确保表格的列都具有同样的宽度,
