@@ -54,10 +54,16 @@ public class CrimeListFragment extends ListFragment {
     private AppCompatActivity mActivity;
     private MyCrimeAdapter myCrimeAdapter;
 
+    /**
+     *  设置接口回调
+     */
+    private Callbacks mCallbacks;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mActivity = (AppCompatActivity) getActivity();
+        mCallbacks = (Callbacks)getActivity();
     }
 
     @Override
@@ -154,6 +160,12 @@ public class CrimeListFragment extends ListFragment {
         }
     }
 
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
+
     /**
      *  覆盖ListFragment类的此方法, 可以方便的响应用户对列表的点击事件
      */
@@ -163,10 +175,12 @@ public class CrimeListFragment extends ListFragment {
         CrimeBean item = (CrimeBean) getListAdapter().getItem(position);
         Log.d(TAG, "onListItemClick: 点击的内容"+item.getTitle());
 
-        Intent intent = new Intent(getActivity().getApplicationContext(), CrimePagerActivity.class);
-        // 传入陋习的id
-        intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, item.getId());
-        startActivity(intent);
+//        Intent intent = new Intent(getActivity().getApplicationContext(), CrimePagerActivity.class);
+//        // 传入陋习的id
+//        intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, item.getId());
+//        startActivity(intent);
+
+        mCallbacks.onCrimeSelected(item);
     }
 
     @Override
@@ -184,10 +198,13 @@ public class CrimeListFragment extends ListFragment {
                 CrimeLab.getInstance(getActivity().getApplicationContext()).addCrime(crimeBean);
 
                 // 创建Intent, 并传入传递的实例id, 打开一个CrimePagerActivity
-                Intent intent = new Intent();
-                intent.setClass(getActivity().getApplicationContext(), CrimePagerActivity.class);
-                intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crimeBean.getId());
-                startActivityForResult(intent, 0);
+//                Intent intent = new Intent();
+//                intent.setClass(getActivity().getApplicationContext(), CrimePagerActivity.class);
+//                intent.putExtra(CrimeFragment.EXTRA_CRIME_ID, crimeBean.getId());
+//                startActivityForResult(intent, 0);
+
+                mCallbacks.onCrimeSelected(crimeBean);
+                ((MyCrimeAdapter)getListAdapter()).notifyDataSetChanged();
 
                 return true;
 
@@ -240,6 +257,8 @@ public class CrimeListFragment extends ListFragment {
         }
     }
 
+
+
     /**
      *  定制list的列表项, 继承adapter 重写getView方法
      */
@@ -283,5 +302,19 @@ public class CrimeListFragment extends ListFragment {
 
 
         }
+    }
+
+    /**
+     *  Required interface for hosting activities
+     */
+    public interface Callbacks{
+        void onCrimeSelected(CrimeBean item);
+
+        // 更新UI
+        void onCrimeUI(CrimeBean crimeBean);
+    }
+
+    public void updateUI(){
+        ((MyCrimeAdapter)getListAdapter()).notifyDataSetChanged();
     }
 }

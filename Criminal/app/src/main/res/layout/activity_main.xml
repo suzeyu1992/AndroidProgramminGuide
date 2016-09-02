@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.szysky.note.criminal.activity.CrimeActivity">
+    android:layout_height="match_parent">
 
 
 

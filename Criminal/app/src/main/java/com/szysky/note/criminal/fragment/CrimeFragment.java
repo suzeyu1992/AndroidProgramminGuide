@@ -74,6 +74,13 @@ public class CrimeFragment extends Fragment {
      */
     private static final String DIALOG_DATE = "date";
     private Button btn_sendSms;
+    private Callbacks mCallbacks;
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        mCallbacks = (Callbacks) activity;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -129,6 +136,7 @@ public class CrimeFragment extends Fragment {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // 当 editText 的内容发生改变的时候, 将值设置到bean对象中
                 mCrimeBean.setTitle(s.toString());
+                mCallbacks.onCrimeUpdated(mCrimeBean);
             }
 
             @Override
@@ -144,6 +152,7 @@ public class CrimeFragment extends Fragment {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 //  设置陋习的是否已经解决
                 mCrimeBean.setSolved(isChecked);
+                mCallbacks.onCrimeUpdated(mCrimeBean);
             }
         });
 
@@ -266,6 +275,12 @@ public class CrimeFragment extends Fragment {
     }
 
     @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode != Activity.RESULT_OK) return;
 
@@ -274,6 +289,7 @@ public class CrimeFragment extends Fragment {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
             mCrimeBean.setDate(date);
             updateDate();
+            mCallbacks.onCrimeUpdated(mCrimeBean);
         } else if (requestCode == REQUEST_PHOTO){
             //  判断是否是打开照相Fragment所返回的
 
@@ -286,6 +302,7 @@ public class CrimeFragment extends Fragment {
                 mCrimeBean.setmPhoto(photoBean);
                 Log.i(TAG, "onActivityResult: @@-> 图片保存的文件名: "+stringExtra +"   Crime: "+mCrimeBean.getTitle()+" 对象已经存在照片属性");
                 showPhoto();
+                mCallbacks.onCrimeUpdated(mCrimeBean);
 
             }else {
                 // 照相失败
@@ -318,6 +335,8 @@ public class CrimeFragment extends Fragment {
             mCrimeBean.setSusepect(suspect);
             btn_sendSms.setText(suspect);
 
+            mCallbacks.onCrimeUpdated(mCrimeBean);
+
 
         }
     }
@@ -340,6 +359,9 @@ public class CrimeFragment extends Fragment {
     }
 
 
+    public interface Callbacks{
+        void onCrimeUpdated(CrimeBean crime);
+    }
 
     /**
      *  抽取常用方法, 更新按钮的显示时间

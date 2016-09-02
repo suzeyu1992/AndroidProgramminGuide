@@ -26,7 +26,7 @@ import java.util.UUID;
  * ClassDescription :
  */
 
-public class CrimePagerActivity extends AppCompatActivity {
+public class CrimePagerActivity extends AppCompatActivity implements CrimeFragment.Callbacks{
 
     /**
      *  作为对fragment进行托管的容器
@@ -106,20 +106,8 @@ public class CrimePagerActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    public void onCrimeUpdated(CrimeBean crime) {
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    }
 }
