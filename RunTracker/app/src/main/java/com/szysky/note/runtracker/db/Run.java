@@ -14,6 +14,11 @@ import java.util.Date;
 public class Run {
     private Date mStartDate;
 
+    /**
+     *  为支持查询多张run数据库表并能在应用中加以区分,添加一个区分属性ID
+     */
+    private long mId;
+
     public Run(){
         mStartDate = new Date();
     }
@@ -37,4 +42,11 @@ public class Run {
         return String.format("%02d:%02d:%02d", hours, minutes, second);
     }
 
+    public long getId() {
+        return mId;
+    }
+
+    public void setId(long mId) {
+        this.mId = mId;
+    }
 }

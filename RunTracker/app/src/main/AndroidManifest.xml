@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".broadcast.LocationReceiver"
+        <receiver android:name=".broadcast.TrackingLocationReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.szysky.note.runtracker.ACTION_LOCATION"/>

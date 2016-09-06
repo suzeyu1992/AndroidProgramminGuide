@@ -130,13 +130,12 @@ public class RunFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_start:
-                mRunManager.startLocationUpdates();
-                mRun = new Run();
+                mRun = mRunManager.startNewRun();
                 updateUI();
                 break;
 
             case R.id.btn_stop:
-                mRunManager.stopLocationUpdates();
+                mRunManager.stopRun();
                 updateUI();
                 break;
         }
