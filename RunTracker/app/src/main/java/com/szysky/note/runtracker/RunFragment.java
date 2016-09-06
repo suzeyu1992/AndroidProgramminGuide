@@ -49,7 +49,5 @@ public class RunFragment extends Fragment {
         return  rootView;
 
 
-
-
     }
 }
