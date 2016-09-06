@@ -143,7 +143,7 @@ public class RunManager {
         return run;
     }
 
-    private void startTrackingRun(Run run) {
+    public void startTrackingRun(Run run) {
         mCurrentRunId = run.getId();
 
         mPrefs.edit().putLong(PREF_CURRENT_RUN_ID, mCurrentRunId).commit();
@@ -174,6 +174,40 @@ public class RunManager {
 
     public RunDatabaseHelper.RunCursor queryRuns(){
         return mHelper.queryRuns();
+    }
+
+    /**
+     *  对RunDatabaseHelper#queryRun(long)方法的返回结果进行封装,
+     *  如果有数据存在, 则从第一条记录中取出Run对象.
+     */
+    public Run getRun(long id){
+        Run run = null;
+        RunDatabaseHelper.RunCursor runCursor = mHelper.queryRun(id);
+        runCursor.moveToFirst();
+
+        // If you got a row, get a run
+        // 如果记录存在, isAfterLast()会返回false值
+        if (!runCursor.isAfterLast()) {
+            run = runCursor.getRun();
+        }
+        runCursor.close();
+        return run;
+    }
+
+    /**
+     *  取得旅程的最近一次地理位置信息
+     */
+    public Location getLastLocationForRun(long runId){
+        Location location = null;
+        RunDatabaseHelper.LocationCursor cursor = mHelper.queryLastLocationForRun(runId);
+        cursor.moveToFirst();
+        // If you got a row, get a location
+        if (! cursor.isAfterLast()){
+            location = cursor.getLocation();
+        }
+
+        cursor.close();
+        return location;
     }
 
 

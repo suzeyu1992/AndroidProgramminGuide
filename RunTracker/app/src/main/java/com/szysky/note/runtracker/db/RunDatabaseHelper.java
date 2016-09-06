@@ -134,4 +134,70 @@ public class RunDatabaseHelper extends SQLiteOpenHelper {
         }
     }
 
+    public RunCursor queryRun(long id){
+        //  通过where子句. 限制查询只能返回一条记录, 然后封装到RunCursor中并返回
+        Cursor wrapped = getReadableDatabase().query(TABLE_RUN,
+                null,   // All columns
+                COLUMN_RUN_ID + " = ?",           // look for a run ID
+                new String[]{String.valueOf(id)}, // with the value
+                null,   // group by
+                null,   // having
+                null,   // order by
+                "1"     //  limit 1 row
+        );
+        return new RunCursor(wrapped);
+    }
+
+    /**
+     *  与RunCursor使用目的相同, 但这个类用于封装location数据表中返回记录的cursor.
+     *  并将记录各字段转换为Location对象属性
+     */
+    public static class LocationCursor extends CursorWrapper{
+
+        /**
+         * Creates a cursor wrapper.
+         *
+         * @param cursor The underlying cursor to wrap.
+         */
+        public LocationCursor(Cursor cursor) {
+            super(cursor);
+        }
+
+        public Location getLocation(){
+            if (isBeforeFirst() || isAfterLast()){
+                return null;
+            }
+
+            // First get the provider out so you can use the constructor
+            String provider = getString(getColumnIndex(COLUMN_LOCATION_PROVIDE));
+            Location loc = new Location(provider);
+
+            // Populate the remaining properties
+            loc.setLongitude(getDouble(getColumnIndex(COLUMN_LOCATION_LONGITUDE)));
+            loc.setLatitude(getDouble(getColumnIndex(COLUMN_LOCATION_LATITUDE)));
+            loc.setAltitude(getDouble(getColumnIndex(COLUMN_LOCATION_ALTITUDE)));
+            loc.setTime(getLong(getColumnIndex(COLUMN_LOCATION_TIMESTAMP)));
+
+            return loc;
+        }
+
+    }
+
+    public LocationCursor queryLastLocationForRun(long runId){
+        Cursor wrapped = getReadableDatabase().query(TABLE_LOCATION,
+                null,
+                COLUMN_LOCATION_RUN_ID + "= ?",
+                new String[]{String.valueOf(runId)},
+                null,
+                null,
+                COLUMN_LOCATION_ALTITUDE + " desc",  // order by latest first
+                "1"
+        );
+
+        // 把查询的结果集转成对应的对象, 方便后续操作
+        return new LocationCursor(wrapped);
+
+
+    }
+
 }

@@ -1,6 +1,7 @@
 package com.szysky.note.runtracker.fragment;
 
 import android.content.Context;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -8,12 +9,17 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.ListFragment;
 import android.support.v4.widget.CursorAdapter;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.szysky.note.runtracker.R;
 import com.szysky.note.runtracker.RunManager;
+import com.szysky.note.runtracker.activity.RunActivity;
 import com.szysky.note.runtracker.db.Run;
 import com.szysky.note.runtracker.db.RunDatabaseHelper;
 
@@ -27,9 +33,12 @@ import com.szysky.note.runtracker.db.RunDatabaseHelper;
 public class RunListFragment extends ListFragment {
     private RunDatabaseHelper.RunCursor mCursor;
 
+    private static final int REQUEST_NEW_RUN = 0;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
 
         //  Query the list of runs
         mCursor = RunManager.getInstance(getActivity()).queryRuns();
@@ -38,6 +47,43 @@ public class RunListFragment extends ListFragment {
         RunCursorAdapter runCursorAdapter = new RunCursorAdapter(getActivity(), mCursor);
         setListAdapter(runCursorAdapter);
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.run_list_options, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.menu_new_run:
+                Intent intent = new Intent(getActivity(), RunActivity.class);
+                startActivityForResult(intent, REQUEST_NEW_RUN);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (REQUEST_NEW_RUN == requestCode){
+            mCursor.requery();
+            ((RunCursorAdapter)getListAdapter()).notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onListItemClick(ListView l, View v, int position, long id) {
+        Intent intent = new Intent(getActivity(), RunActivity.class);
+
+        // 因为指定了run_id表中的ID字段, CursorAdapter检测到该字段并将其作为id传递给了此方法中
+        intent.putExtra(RunActivity.EXTRA_RUN_ID, id);
+        startActivity(intent);
     }
 
     @Override

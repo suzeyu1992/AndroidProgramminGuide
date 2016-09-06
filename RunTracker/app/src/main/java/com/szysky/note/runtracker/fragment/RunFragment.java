@@ -28,6 +28,7 @@ import com.szysky.note.runtracker.db.Run;
  */
 public class RunFragment extends Fragment implements View.OnClickListener {
 
+    private static final String ARG_RUN_ID = "RUN_ID";
     private TextView mStartedTextView;
     private TextView mLatitudeTextView;
     private TextView mLongitudeTextView;
@@ -43,6 +44,10 @@ public class RunFragment extends Fragment implements View.OnClickListener {
     private BroadcastReceiver mLocationReceiver = new LocationReceiver(){
         @Override
         protected void onLocationReceived(Context context, Location loc) {
+            if (!mRunManager.isTrackingRun()){
+                return ;
+            }
+
             mLastLocation = loc;
             if (isVisible())    updateUI();
         }
@@ -63,6 +68,19 @@ public class RunFragment extends Fragment implements View.OnClickListener {
 
         //  获取地理位置的管理者的类
         mRunManager = RunManager.getInstance(getActivity());
+
+        // Check for a Run ID as an argument, and find the run
+        Bundle arguments = getArguments();
+        if (arguments != null){
+            long runId = arguments.getLong(ARG_RUN_ID, -1);
+            if (runId != -1){
+                mRun = mRunManager.getRun(runId);
+                mLastLocation = mRunManager.getLastLocationForRun(runId);
+            }
+        }
+
+
+
     }
 
     @Nullable
@@ -102,6 +120,15 @@ public class RunFragment extends Fragment implements View.OnClickListener {
         super.onStop();
     }
 
+
+    public static RunFragment newInstance(long runId){
+        Bundle bundle = new Bundle();
+        bundle.putLong(ARG_RUN_ID, runId);
+        RunFragment runFragment = new RunFragment();
+        runFragment.setArguments(bundle);
+        return runFragment;
+    }
+
     private void updateUI(){
         //  获得目前获取位置的广播的开启状态
         boolean trackingRunState = mRunManager.isTrackingRun();
@@ -130,7 +157,12 @@ public class RunFragment extends Fragment implements View.OnClickListener {
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_start:
-                mRun = mRunManager.startNewRun();
+                if (mRun == null){
+                    mRun = mRunManager.startNewRun();
+                }else{
+                    mRunManager.startTrackingRun(mRun);
+                }
+
                 updateUI();
                 break;
 
