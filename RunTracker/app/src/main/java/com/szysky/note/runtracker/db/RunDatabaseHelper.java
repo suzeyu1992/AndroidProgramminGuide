@@ -2,9 +2,13 @@ package com.szysky.note.runtracker.db;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.database.Cursor;
+import android.database.CursorWrapper;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
+
+import java.util.Date;
 
 /**
  * Author :  suzeyu
@@ -35,6 +39,9 @@ public class RunDatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_LOCATION_TIMESTAMP = "timestamp";
     private static final String COLUMN_LOCATION_PROVIDE = "provider";
     private static final String COLUMN_LOCATION_RUN_ID = "run_id";
+
+
+    private static final String COLUMN_RUN_ID = "_id";
 
     public RunDatabaseHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
@@ -86,4 +93,45 @@ public class RunDatabaseHelper extends SQLiteOpenHelper {
 
 
     }
+
+    /**
+     * 方法内部首先执行SQL查询语句, 提供未经处理的cursor给新的RunCursor, 然后返回给queryRuns()方法的调用者.
+     */
+    public RunCursor queryRuns(){
+        Cursor query = getReadableDatabase().query(TABLE_RUN, null, null, null, null, null, COLUMN_RUN_START_DATE + " asc");
+        return new RunCursor(query);
+    }
+
+
+
+    /**
+     * a convenience class to wrap a cursor that return rows from the "run" table.
+     * 主要负责将run表中的各个记录转化为Run实例, 并按要求对结果进行组织排序
+     */
+    public static class RunCursor extends CursorWrapper{
+        public RunCursor(Cursor cursor){
+            super(cursor);
+        }
+
+        /**
+         *  基于当前查询记录的列值创建Run实例并为其赋值.
+         *  对于本类的使用者可遍历结果集里面的行数, 并对每一行调用getRun()方法,得到一个对象,而不是数据
+         * @return
+         */
+        public Run getRun(){
+            //  确认cursor是否出现越界
+            if (isBeforeFirst() || isAfterLast()){
+                return null;
+            }
+
+            Run run = new Run();
+            long runId = getLong(getColumnIndex(COLUMN_RUN_ID));
+            run.setId(runId);
+            long startDate = getLong(getColumnIndex(COLUMN_RUN_START_DATE));
+            run.setStartDate(new Date(startDate));
+            return run;
+
+        }
+    }
+
 }

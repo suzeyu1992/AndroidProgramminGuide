@@ -172,6 +172,9 @@ public class RunManager {
         }
     }
 
+    public RunDatabaseHelper.RunCursor queryRuns(){
+        return mHelper.queryRuns();
+    }
 
 
 

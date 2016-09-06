@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RunTracker</string>
+    <string name="cell_text">Run at %1$s</string>
 </resources>
