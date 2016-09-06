@@ -3,19 +3,32 @@
     package="com.szysky.note.runtracker">
 
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!--添加Location的使用权限, 和GPS硬件uses-feature的界面的添加-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-feature android:required="true" android:name="android.hardware.location.gps"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver android:name=".broadcast.LocationReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.szysky.note.runtracker.ACTION_LOCATION"/>
+            </intent-filter>
+
+        </receiver>
+
     </application>
 
 </manifest>

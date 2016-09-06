@@ -1,8 +1,8 @@
-package com.szysky.note.runtracker;
+package com.szysky.note.runtracker.activity;
 
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+
+import com.szysky.note.runtracker.fragment.RunFragment;
 
 public class MainActivity extends SingleFragmentActivity {
 

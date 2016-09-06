@@ -5,6 +5,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ProviderInfo;
+import android.location.Location;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 
@@ -34,9 +36,9 @@ public class RunManager {
     }
 
     public static RunManager getInstance(Context context) {
-        if (sRunManager != null) {
+        if (sRunManager == null) {
             synchronized (RunManager.class) {
-                if (sRunManager != null) {
+                if (sRunManager == null) {
                     sRunManager = new RunManager(context);
                 }
             }
@@ -64,6 +66,14 @@ public class RunManager {
     public void startLocationUpdates() {
         String gpsProvider = LocationManager.GPS_PROVIDER;
 
+        //  获得上一次定位的信息
+        Location lastKnow = mLocationManager.getLastKnownLocation(gpsProvider);
+        if (lastKnow != null){
+            //  reset the time to now
+            lastKnow.setTime(System.currentTimeMillis());
+            broadcastLocation(lastKnow);
+        }
+
         //  start updates from the location manager
         PendingIntent pi = getLocationPendingIntent(true);
         if (ActivityCompat.checkSelfPermission(
@@ -79,7 +89,13 @@ public class RunManager {
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        mLocationManager.requestLocationUpdates(gpsProvider, 0, 0, pi);
+        mLocationManager.requestLocationUpdates(gpsProvider, 0, 1, pi);
+    }
+
+    private void broadcastLocation(Location lastKnow) {
+        Intent intent = new Intent(ACTION_LOCATION);
+        intent.putExtra(LocationManager.KEY_LOCATION_CHANGED, lastKnow);
+        mAppContext.sendBroadcast(intent);
     }
 
     public void stopLocationUpdates(){
