@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tabl_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:stretchColumns="*">
+
+    <!--使用了stretchColumns那么会确保表格的列都具有同样的宽度,
+    例如最下方的TableRow里面的元素虽然width设置为为0dp,
+    但是weight却不需要再去设置. 因为他们会平分一个水平线-->
+
+
+    <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="3dp">
+
+        <TextView
+            style="@style/sty_text_left"
+            android:text="Started:" />
+
+        <TextView
+            android:id="@+id/tv_row_start"
+            style="@style/sty_text_right"
+            android:text="结果" />
+    </TableRow>
+
+    <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="3dp">
+
+        <TextView
+            style="@style/sty_text_left"
+            android:text="Latitude:" />
+
+        <TextView
+            android:id="@+id/tv_row_latitude"
+            style="@style/sty_text_right"
+            android:text="结果" />
+    </TableRow>
+
+    <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="3dp">
+
+        <TextView
+            style="@style/sty_text_left"
+            android:text="Longitude:" />
+
+        <TextView
+            android:id="@+id/tv_row_longitude"
+            style="@style/sty_text_right"
+            android:text="结果" />
+    </TableRow>
+
+    <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="3dp">
+
+        <TextView
+            style="@style/sty_text_left"
+            android:text="Altitude:" />
+
+        <TextView
+            android:id="@+id/tv_row_altitude"
+            style="@style/sty_text_right"
+            android:text="结果" />
+    </TableRow>
+
+    <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="3dp">
+
+        <TextView
+            style="@style/sty_text_left"
+            android:text="Elapsed Time:" />
+
+        <TextView
+            android:id="@+id/tv_row_duration"
+            style="@style/sty_text_right"
+            android:text="结果" />
+    </TableRow>
+
+    <TableRow
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <Button
+            android:id="@+id/btn_start"
+            android:text="开始"/>
+
+        <Button
+            android:id="@+id/btn_stop"
+            android:text="结束"/>
+    </TableRow>
+
+
+</TableLayout>
