@@ -22,7 +22,7 @@
         <TextView
             android:id="@+id/tv_row_start"
             style="@style/sty_text_right"
-            android:text="结果" />
+            android:text="" />
     </TableRow>
 
     <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
@@ -37,7 +37,7 @@
         <TextView
             android:id="@+id/tv_row_latitude"
             style="@style/sty_text_right"
-            android:text="结果" />
+            android:text="" />
     </TableRow>
 
     <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
@@ -52,7 +52,7 @@
         <TextView
             android:id="@+id/tv_row_longitude"
             style="@style/sty_text_right"
-            android:text="结果" />
+            android:text="" />
     </TableRow>
 
     <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
@@ -67,7 +67,7 @@
         <TextView
             android:id="@+id/tv_row_altitude"
             style="@style/sty_text_right"
-            android:text="结果" />
+            android:text="" />
     </TableRow>
 
     <TableRow xmlns:android="http://schemas.android.com/apk/res/android"
@@ -82,7 +82,7 @@
         <TextView
             android:id="@+id/tv_row_duration"
             style="@style/sty_text_right"
-            android:text="结果" />
+            android:text="" />
     </TableRow>
 
     <TableRow

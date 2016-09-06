@@ -38,7 +38,6 @@ public class LocationReceiver extends BroadcastReceiver {
     }
 
     protected void onLocationReceived(Context context, Location loc) {
-        Toast.makeText(context, "更新了", Toast.LENGTH_SHORT).show();
         Log.d(TAG, "Got location from "+ loc.getProvider() + " : " +loc.getLatitude()+", "+loc.getLongitude() );
     }
 

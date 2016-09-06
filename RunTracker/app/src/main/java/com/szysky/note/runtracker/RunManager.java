@@ -21,7 +21,7 @@ import android.support.v4.app.ActivityCompat;
 
 public class RunManager {
 
-    private static final String ACTION_LOCATION = "com.szysky.note.runtracker.ACTION_LOCATION";
+    public static final String ACTION_LOCATION = "com.szysky.note.runtracker.ACTION_LOCATION";
     private static volatile RunManager sRunManager;
 
     /**
