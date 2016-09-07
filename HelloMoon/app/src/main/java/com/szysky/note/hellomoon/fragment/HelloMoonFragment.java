@@ -26,6 +26,23 @@ public class HelloMoonFragment extends Fragment implements View.OnClickListener 
     private Button mStopButton;
     private AudioPlayer mPlayer = new AudioPlayer();
 
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // 使用此方法可确保MediaPlayer实例一直存在, 主要是为了应对设备配置的变化
+        // 设置为true之后fragment不会随activity销毁而销毁. 相反它会保留等待被再次被调用
+        setRetainInstance(true);
+
+        /**
+         * fragment如果进入了保留状态, 那么通常需要满足两个条件
+         * 1. 已经给Fragment设定了setRetainInstance(true)
+         * 2. 因设备配置改变, 托管的activity正在被销毁
+         *
+         * * Fragment处于保留状态的事件非常短暂, 即fragment脱离旧的activity到重新附加给创建的新的activity之间的一段时间
+         */
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {

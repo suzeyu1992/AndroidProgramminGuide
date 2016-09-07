@@ -6,11 +6,12 @@ import android.os.Bundle;
 
 import com.szysky.note.hellomoon.R;
 
-public class HelloMoonActivity extends FragmentActivity {
+public class HelloMoonActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
     }
 }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--当本地语言不是中文, 并且处于横屏状态时-->
+    <string name="app_name">在横屏的时候我是一个很长很长的标题</string>
+</resources>
