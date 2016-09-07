@@ -7,7 +7,7 @@
 
 ### 相应Blog地址
 
-(整理笔记1~8章)[http://szysky.com/2016/09/07/%E3%80%8AAndroid%E7%BC%96%E7%A8%8B%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E3%80%8B%E9%9A%8F%E8%AE%B0%E4%B8%80/]
+[读书随记1~8章](http://szysky.com/2016/09/07/%E3%80%8AAndroid%E7%BC%96%E7%A8%8B%E6%9D%83%E5%A8%81%E6%8C%87%E5%8D%97%E3%80%8B%E9%9A%8F%E8%AE%B0%E4%B8%80/)
 
 
 
